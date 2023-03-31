@@ -2,47 +2,90 @@ package com.github.curriculeon;
 
 
 public class Student implements Comparable<Student> {
+    private String firstName;    // The student's first name
+    private String lastName;     // The student's last name
+    private Double[] testScores; // The student's test scores as an array of Doubles
 
     public Student(String firstName, String lastName, Double[] testScores) {
+        // Re-assignments of private vars to inputted parameters into constructor
+        this.firstName  = firstName;
+        this.lastName   = lastName;
+        this.testScores = testScores;
     }
 
-    public Student() {
-
+    public Student() { // Re-assignments of private vars to null due to this being the null constructor
+        this.firstName  = null;
+        this.lastName   = null;
+        this.testScores = new Double[]{};
     }
 
     public String getFirstName() {
-        return null;
+        return this.firstName;
     }
 
     public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public String getLastName() {
-        return null;
+        return this.lastName;
     }
 
     public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public Double[] getExamScores() {
-        return null;
+        return this.testScores;
     }
 
     public void addExamScore(double examScore) {
+        Double[] updatedScores = new Double[getExamScores().length + 1]; // Makes a new array that is one larger than the old array
+        for (int i = 0; i < getExamScores().length; i++) { // Loops thru exam score array
+            updatedScores[i] = getExamScores()[i]; // Copies old information over
+        }
+        updatedScores[updatedScores.length - 1] = examScore; // Sets new exam score
+        this.testScores = updatedScores; // Updates the scores to the internal array
     }
 
-
-    public void setExamScore(int examNum, double updateScore) {
+    public void setExamScore(int examNum, double updateScore) { // THERE IS NO TEST FOR THIS METHOD
+        if ( examNum > 0 && examNum < testScores.length && updateScore > 0.0 && updateScore < 150.0 ) {
+            testScores[examNum] = updateScore;
+        } else if ( examNum < 0 || examNum > testScores.length ) {
+            throw new IllegalArgumentException("The inputted test does not exist.");
+        } else if ( updateScore < 0.0 || updateScore > 150.0) {
+            throw new IllegalArgumentException("The inputted test score is not valid.");
+        }
     }
-
 
     public Double getAverageExamScore() {
-        return null;
+        Double summationVar = 0.0, returnVar;
+        for ( int i = 0 ; i < getExamScores().length ; i++ ) {
+            summationVar += getExamScores()[i];
+        }
+        returnVar = summationVar / getExamScores().length;
+        return returnVar;
     }
 
     @Override
     public String toString() {
         return null;
+    }
+
+    public Character getGrade(Double grade) {
+        Character letterGrade;
+        if ( grade >= 84 ) {
+            letterGrade = 'A';
+        } else if ( grade < 84 && grade > 71) {
+            letterGrade = 'B';
+        } else if ( grade < 70 && grade > 56) {
+            letterGrade = 'C';
+        } else if ( grade <= 55 && grade > 46) {
+            letterGrade = 'D';
+        } else {
+            letterGrade = 'F';
+        }
+        return letterGrade;
     }
 
     /**
@@ -51,7 +94,11 @@ public class Student implements Comparable<Student> {
      */
     @Override
     public int compareTo(Student studentToCompareAgainst) {
-        return Integer.valueOf(null);
+        Double comparisonScore = studentToCompareAgainst.getAverageExamScore();
+        Double average = getAverageExamScore();
+        int compare = comparisonScore.compareTo(average);
+        if(compare == 0)
+            return this.getLastName().compareTo(studentToCompareAgainst.getLastName());
+        return compare;
     }
 }
-
